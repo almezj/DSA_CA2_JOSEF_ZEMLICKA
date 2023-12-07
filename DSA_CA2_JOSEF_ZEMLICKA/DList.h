@@ -8,18 +8,18 @@ template <class T>
 class DList
 {
 public:
-	DListNode<T> *head, *tail;
+	DListNode<T>* head, * tail;
 	int count;
 
 	DList();
-	DList(DList<T> &list);
+	DList(DList<T>& list);
 	void append(T item);
 	void prepend(T item);
 	void removeHead();
 	void removeTail();
 	DListIterator<T> getIterator();
-	void insert(DListIterator<T> &iter, T item);
-	DListIterator<T> remove(DListIterator<T> &iter);
+	void insert(DListIterator<T>& iter, T item);
+	DListIterator<T> remove(DListIterator<T>& iter);
 	int size();
 	~DList();
 };
