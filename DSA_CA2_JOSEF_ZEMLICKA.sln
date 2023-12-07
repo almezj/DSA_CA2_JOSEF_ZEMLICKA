@@ -5,6 +5,8 @@ VisualStudioVersion = 17.7.34202.233
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DSA_CA2_JOSEF_ZEMLICKA", "DSA_CA2_JOSEF_ZEMLICKA\DSA_CA2_JOSEF_ZEMLICKA.vcxproj", "{D844B451-26FC-40BB-AE8F-04A51E3E8512}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CA2_Tests", "CA2_Tests\CA2_Tests.vcxproj", "{E5866522-F245-4212-A97C-528F7192A0C9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{D844B451-26FC-40BB-AE8F-04A51E3E8512}.Release|x64.Build.0 = Release|x64
 		{D844B451-26FC-40BB-AE8F-04A51E3E8512}.Release|x86.ActiveCfg = Release|Win32
 		{D844B451-26FC-40BB-AE8F-04A51E3E8512}.Release|x86.Build.0 = Release|Win32
+		{E5866522-F245-4212-A97C-528F7192A0C9}.Debug|x64.ActiveCfg = Debug|x64
+		{E5866522-F245-4212-A97C-528F7192A0C9}.Debug|x64.Build.0 = Debug|x64
+		{E5866522-F245-4212-A97C-528F7192A0C9}.Debug|x86.ActiveCfg = Debug|Win32
+		{E5866522-F245-4212-A97C-528F7192A0C9}.Debug|x86.Build.0 = Debug|Win32
+		{E5866522-F245-4212-A97C-528F7192A0C9}.Release|x64.ActiveCfg = Release|x64
+		{E5866522-F245-4212-A97C-528F7192A0C9}.Release|x64.Build.0 = Release|x64
+		{E5866522-F245-4212-A97C-528F7192A0C9}.Release|x86.ActiveCfg = Release|Win32
+		{E5866522-F245-4212-A97C-528F7192A0C9}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
