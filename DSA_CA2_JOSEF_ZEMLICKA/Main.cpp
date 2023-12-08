@@ -9,27 +9,6 @@
 
 using namespace std;
 
-// BFS Printing function copied from Trees.cpp to help visualizing BFS algorithm
-//void printBFS(Tree<string> tree)
-//{
-//	queue<Tree<string>> queue;
-//	queue.push(tree);
-//	while (!queue.empty())
-//	{
-//		DListIterator<Tree<string>*> iter = queue.front().children->getIterator();
-//		while (iter.isValid())
-//		{
-//			queue.push(*iter.item());
-//			iter.advance();
-//		}
-//		cout << queue.front().data << ", ";
-//		queue.pop();
-//
-//	}
-//
-//}
-
-
 template<typename T>
 Tree<T>* loadXML(const string& xmlFilename) {
     cout << "loadXML started" << endl;
@@ -70,6 +49,7 @@ Tree<T>* loadXML(const string& xmlFilename) {
 
                         nodeStack.push(newNode);
                         currentNode = newNode;
+                        /*currentNode->children->printThis();*/
                     }
                     // If the tag is an attribute, add it to the currentNode as an attribute (name, type, length)
                     else {
@@ -159,9 +139,13 @@ int main() {
         cout << endl;
         cout << "Memory used by XML Tree: " << xmlTree->memoryUsage(xmlTree) << endl;
         cout << endl;
-        //xmlTree->pruneTree(xmlTree);
-        //cout << "Pruned XML Tree Structure:" << endl;
-        //printTree(xmlTree);
+        xmlTree->pruneTree(xmlTree);
+        cout << "Pruned XML Tree Info:" << endl;
+        cout << "XML Tree node count: " << xmlTree->count() << endl;
+        cout << endl;
+        cout << "Memory used by XML Tree: " << xmlTree->memoryUsage(xmlTree) << endl;
+
+        cout <<"Path to a file with name 'TestSListNode.obj': " << xmlTree->pathTo("TestSListNode.obj") << endl;
 	}
 	else {
 		cout << "Failed to load XML tree." << endl;

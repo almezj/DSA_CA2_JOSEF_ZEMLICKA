@@ -1,8 +1,11 @@
 #pragma once
 #include "DList.h"
+#include "DListIterator.h"
 #include <string>
 #include <queue>
+#include <iostream>
 
+using namespace std;
 template<class T>
 class Tree
 {
@@ -18,6 +21,8 @@ public:
 	T getData();
 	int memoryUsage(Tree<T>* node);
 	void pruneTree(Tree<T>* node);
+	string pathTo(string name);
+	void displayContents(string folderName);
 };
 template <class T>
 T Tree<T>::getData()
@@ -55,23 +60,98 @@ int Tree<T>::memoryUsage(Tree<T>* node)
 template<class T>
 void Tree<T>::pruneTree(Tree<T>* node)
 {
-	if (node->children->isEmpty())
-	{
-		if (node->parent != nullptr)
-		{
-			node->parent->children->remove(node);
-		}
+	DListIterator<Tree<T>*> iter(node->children);
+
+	cout << "Children size: " << node->children->size() << endl;
+
+	if (!iter.isValid()) {
+		cout << "No children" << endl;
+		return;
 	}
-	else
+
+	while (iter.isValid())
 	{
-		DListIterator<Tree<T>*> iter = node->children->getIterator();
-		while (iter.isValid())
+		Tree<T>* child = iter.item();
+		
+		cout << "Processing child: " << child->name << endl;
+
+		if (child->children->isEmpty() && child->getData() == "dir")
 		{
-			pruneTree(iter.item());
-			iter.advance();
+			cout << "Removing " << child->name << endl;
+			iter = node->children->remove(iter);
+		}
+		else
+		{
+			cout << "Pruning " << child->name << endl;
+			pruneTree(child);
+			if (iter.isValid()) {
+				iter.advance();
+			}
 		}
 	}
 }
+template <class T>
+string Tree<T>::pathTo(string name)
+{
+	if(name == ""){
+		return "";
+	}
+
+	string path = "";
+	bool found = false;
+	if (this->name.find(name) != string::npos)
+	{
+		path = this->name;
+		return path;
+	}
+	else
+	{
+		DListIterator<Tree<T>*> iter = children->getIterator();
+		while (iter.isValid())
+		{
+			path = iter.item()->pathTo(name);
+			if (path != "")
+			{
+				path = this->name + "/" + path;
+				return path;
+			}
+			iter.advance();
+		}
+	}
+	return path;
+};
+
+template<class T>
+void Tree<T>::displayContents(string folderName)
+{
+	if (folderName == "")
+	{
+		return;
+	}
+	else
+	{
+		if (this->name.find(folderName) != string::npos)
+		{
+			cout << this->name << endl;
+		}
+	}
+	DListIterator<Tree<T>*> iter = children->getIterator();
+	while (iter.isValid())
+	{
+		if (iter.item()->type == "dir")
+		{
+			cout << iter.item()->name << endl;
+		}
+		else if (iter.item()->type == "file")
+		{
+			cout << iter.item()->name << " " << iter.item()->length << endl;
+		}
+		iter.item()->displayContents(folderName);
+		iter.advance();
+	}
+}
+
+
 
 template <class T>
 Tree<T>::Tree(T item)
