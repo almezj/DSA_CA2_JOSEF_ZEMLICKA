@@ -1,6 +1,7 @@
 #pragma once
 #include "DList.h"
 #include "DListIterator.h"
+//#include "Main.h"
 #include <string>
 #include <queue>
 #include <iostream>
@@ -19,10 +20,9 @@ public:
 	Tree(T item);
 	int count();
 	T getData();
-	int memoryUsage(Tree<T>* node);
-	void pruneTree(Tree<T>* node);
+	int memoryUsage(string folderName);
 	string pathTo(string name);
-	void displayContents(string folderName);
+	void displayContents(string folderName, bool print = false);
 };
 template <class T>
 T Tree<T>::getData()
@@ -31,20 +31,32 @@ T Tree<T>::getData()
 }
 
 template<class T>
-int Tree<T>::memoryUsage(Tree<T>* node)
+int Tree<T>::memoryUsage(string folderName)
 {
+	if (folderName == "") {
+		return 0;
+	}
+
 	int sum = 0;
+	Tree<T>* correctFolder = nullptr;
 
 	// Queue for BFS
 	std::queue<Tree<T>*> bfsQueue;
-	bfsQueue.push(node);
+	bfsQueue.push(this);
 
 	while (!bfsQueue.empty()) {
+		if(correctFolder != nullptr){
+			DListIterator<Tree<T>*> iter2 = correctFolder->children->getIterator();
+			while (iter2.isValid()) {
+				sum += iter2.item()->length;
+				iter2.advance();
+			}
+			return sum;
+		}
+
+
 		Tree<T>* current = bfsQueue.front();
 		bfsQueue.pop();
-
-		// Add the length of the current node if it has the "length" attribute
-		sum += current->length;
 
 		// Enqueue child nodes for further exploration
 		DListIterator<Tree<T>*> iter = current->children->getIterator();
@@ -52,44 +64,16 @@ int Tree<T>::memoryUsage(Tree<T>* node)
 			bfsQueue.push(iter.item());
 			iter.advance();
 		}
-	}
 
-	return sum;
-}
-
-template<class T>
-void Tree<T>::pruneTree(Tree<T>* node)
-{
-	DListIterator<Tree<T>*> iter(node->children);
-
-	cout << "Children size: " << node->children->size() << endl;
-
-	if (!iter.isValid()) {
-		cout << "No children" << endl;
-		return;
-	}
-
-	while (iter.isValid())
-	{
-		Tree<T>* child = iter.item();
-		
-		cout << "Processing child: " << child->name << endl;
-
-		if (child->children->isEmpty() && child->getData() == "dir")
-		{
-			cout << "Removing " << child->name << endl;
-			iter = node->children->remove(iter);
-		}
-		else
-		{
-			cout << "Pruning " << child->name << endl;
-			pruneTree(child);
-			if (iter.isValid()) {
-				iter.advance();
-			}
+		if(current->name.find(folderName) != string::npos){
+			correctFolder = current;
 		}
 	}
+
+	return 0;
 }
+
+
 template <class T>
 string Tree<T>::pathTo(string name)
 {
@@ -122,31 +106,24 @@ string Tree<T>::pathTo(string name)
 };
 
 template<class T>
-void Tree<T>::displayContents(string folderName)
-{
-	if (folderName == "")
-	{
+void Tree<T>::displayContents(string folderName, bool print) {
+	if (folderName == "") {
 		return;
 	}
-	else
-	{
-		if (this->name.find(folderName) != string::npos)
-		{
-			cout << this->name << endl;
+	else {
+		if (this->name.find(folderName) != string::npos) {
+			print = true;
 		}
 	}
+
+	if (print) {
+		printTree(this);
+		return;
+	}
+
 	DListIterator<Tree<T>*> iter = children->getIterator();
-	while (iter.isValid())
-	{
-		if (iter.item()->type == "dir")
-		{
-			cout << iter.item()->name << endl;
-		}
-		else if (iter.item()->type == "file")
-		{
-			cout << iter.item()->name << " " << iter.item()->length << endl;
-		}
-		iter.item()->displayContents(folderName);
+	while (iter.isValid()) {
+		iter.item()->displayContents(folderName, print);
 		iter.advance();
 	}
 }
@@ -164,6 +141,10 @@ Tree<T>::Tree(T item)
 template <class T>
 int Tree<T>::count()
 {
+	if(this == nullptr) {
+		return 0;
+	}
+
 	int c = 1;
 	DListIterator<Tree<T>*> iter = children->getIterator();
 	while (iter.isValid())

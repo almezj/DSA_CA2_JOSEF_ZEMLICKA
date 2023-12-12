@@ -46,7 +46,9 @@ Tree<T>* loadXML(const string& xmlFilename) {
                         else {
                             root = newNode;
                         }
-
+                        if (tag == "dir") {
+                            newNode->type = "dir";
+                        }
                         nodeStack.push(newNode);
                         currentNode = newNode;
                         /*currentNode->children->printThis();*/
@@ -108,9 +110,13 @@ Tree<T>* loadXML(const string& xmlFilename) {
 
 template <typename T>
 void printTree(Tree<T>* node, int depth = 0) {
-	if (node) {
-		for (int i = 0; i < depth; ++i) cout << "  ";
-		cout << node->getData() << " name: " << node->name << endl;
+    if (node) {
+        for (int i = 0; i < depth; ++i) cout << "  ";
+        if (node->type == "dir")
+            cout << node->getData() << " | name: " << node->name << endl;
+        else {
+             cout << node->getData() << " | name: " << node->name << " | size: " << node->length << endl;
+        }
 		DListIterator<Tree<T>*> iter = node->children->getIterator();
 		while (iter.isValid()) {
 			printTree(iter.item(), depth + 1);
@@ -120,11 +126,47 @@ void printTree(Tree<T>* node, int depth = 0) {
 
 }
 
+template<class T>
+void pruneTree(Tree<T>*& node)
+{
+    DListIterator<Tree<T>*> iter = node->children->getIterator();
+
+    while (iter.isValid())
+    {
+        Tree<T>* child = iter.item();
+        iter.advance();
+        pruneTree(child);
+    }
+
+    if (node->children->isEmpty() && node->type == "dir")
+    {
+        if (node->parent != nullptr)
+        {
+            DListIterator<Tree<T>*> iter = node->parent->children->getIterator();
+            while (iter.isValid() && iter.currentNode->data != node) {
+                iter.advance();
+            }
+            if (iter.isValid())  // Check if the node was found in the parent's children
+            {
+                node->parent->children->remove(iter);
+                delete node;
+                node = nullptr;
+            }
+            // If the node is not found in the parent's children, it might have been already removed by a previous recursion level.
+        }
+        else
+        {
+            delete node;
+            node = nullptr;
+        }
+    }
+}
+
 int main() {
 	cout << "Started" << endl;
 
 	// Path to XML file
-	const string xmlFilename = "C:/Users/Josef/Desktop/vs_sample.xml";
+	const string xmlFilename = "input/vs_sample.xml";
 
 	// Load XML file into a type that can be used by the parse_xml function
 	Tree<string>* xmlTree = loadXML<string>(xmlFilename);
@@ -137,15 +179,19 @@ int main() {
 
         cout << "XML Tree node count: " << xmlTree->count() << endl;
         cout << endl;
-        cout << "Memory used by XML Tree: " << xmlTree->memoryUsage(xmlTree) << endl;
+        cout << "Memory used by folder 'Debug': " << xmlTree->memoryUsage("Debug") << endl;
         cout << endl;
-        xmlTree->pruneTree(xmlTree);
+        pruneTree(xmlTree);
         cout << "Pruned XML Tree Info:" << endl;
+        printTree(xmlTree);
         cout << "XML Tree node count: " << xmlTree->count() << endl;
         cout << endl;
-        cout << "Memory used by XML Tree: " << xmlTree->memoryUsage(xmlTree) << endl;
 
         cout <<"Path to a file with name 'TestSListNode.obj': " << xmlTree->pathTo("TestSListNode.obj") << endl;
+
+        cout << endl;
+        cout << "Displaying contents of the 'objects' directory: " << endl;
+        xmlTree->displayContents("objects");
 	}
 	else {
 		cout << "Failed to load XML tree." << endl;

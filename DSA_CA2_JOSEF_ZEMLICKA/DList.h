@@ -21,6 +21,7 @@ public:
 	void insert(DListIterator<T>& iter, T item);
 	DListIterator<T> remove(DListIterator<T>& iter);
 	int size();
+	bool isEmpty();
 	~DList();
 };
 
@@ -42,6 +43,13 @@ int DList<T>::size()
 {
 	return count;
 }
+
+template <class T>
+bool DList<T>::isEmpty()
+{
+	return count == 0;
+}
+
 template <class T>
 DList<T>::DList()
 {

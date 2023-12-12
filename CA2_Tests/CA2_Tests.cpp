@@ -8,6 +8,8 @@
 #include "../DSA_CA2_JOSEF_ZEMLICKA/Main.cpp"
 
 
+
+
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace CA2Tests
@@ -18,13 +20,13 @@ namespace CA2Tests
 
 		TEST_METHOD(TestLoadInvalidXML)
 		{
-			Tree<string>* tree = loadXML<string>("C:/Users/Josef/Desktop/invalid.xml");
+			Tree<string>* tree = loadXML<string>("invalid.xml");
 			Assert::IsNull(tree);
 		}
 
 		TEST_METHOD(TestLoadValidXML)
 		{
-			Tree<string>* tree = loadXML<string>("C:/Users/Josef/Desktop/vs_sample_simple.xml");
+			Tree<string>* tree = loadXML<string>("C:/Users/Josef/Desktop/vs_sample.xml");
 			Assert::IsNotNull(tree);
 		}
 
@@ -40,13 +42,14 @@ namespace CA2Tests
 
 		TEST_METHOD(TestEmptyTreeCount)
 		{
-			Tree<string>* tree = new Tree<string>("dir");
-			Assert::AreEqual(tree->count(), 1);
+			Tree<string>* tree = nullptr;
+			Assert::AreEqual(tree->count(), 0);
 		}
 
 		TEST_METHOD(TestFullTreeMemoryUsage)
 		{
 			Tree<string>* tree = new Tree<string>("dir");
+			tree->name = "root";
 			Tree<string>* t1 = new Tree<string>("file");
 			t1->length = 1;
 			Tree<string>* t2 = new Tree<string>("file");
@@ -55,15 +58,16 @@ namespace CA2Tests
 			t3->length = 3;
 
 			tree->children->append(t1);
-			t1->children->append(t2);
-			t2->children->append(t3);
+			tree->children->append(t2);
+			tree->children->append(t3);
 
-			Assert::AreEqual(tree->memoryUsage(tree), 6);
+			Assert::AreEqual(tree->memoryUsage("root"), 6);
 		}
 
 		TEST_METHOD(TestEmptyTreeMemoryUsage) {
 			Tree<string>* tree = new Tree<string>("dir");
-			Assert::AreEqual(tree->memoryUsage(tree), 0);
+			tree->name = "root";
+			Assert::AreEqual(tree->memoryUsage("root"), 0);
 		}
 
 		TEST_METHOD(TestPruneTreeFull) {
@@ -82,15 +86,15 @@ namespace CA2Tests
 			d2->children->append(d3);
 			d3->parent = d2;
 
-			d1->pruneTree(d1);
+			pruneTree(d1);
 
-			Assert::AreEqual(d1->count(), 4);
+			Assert::AreEqual(d1->count(), 5);
 		}
 
 		TEST_METHOD(TestPruneTreeEmpty) {
 			Tree<string>* d1 = new Tree<string>("dir");
-			d1->pruneTree(d1);
-			Assert::AreEqual(d1->count(), 0);
+			pruneTree(d1);
+			Assert::AreEqual(d1->count(), 1);
 		}
 
 		TEST_METHOD(TestFindOneExisitngFileFullName) {
